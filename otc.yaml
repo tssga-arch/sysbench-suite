@@ -1,0 +1,25 @@
+#
+# Create a jumpserver environment
+#
+sid: sb1
+snat: True
+sgs:
+  basic:
+   - 22/tcp
+   - 443/tcp
+nets:
+  1:
+    vms:
+      1:
+        image: Standard_Ubuntu_20.04_latest
+        flavor: s2.xlarge.1
+        eip: True
+        cname: sysbench1
+        sg:
+         - 22/tcp
+         - 80/tcp
+         - 443/tcp
+        user_data:
+          #include user-data.yaml
+        vols:
+          1: {{ size: 16 }}
