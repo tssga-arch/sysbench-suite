@@ -1,0 +1,90 @@
+#cloud-config
+debug: true
+disable_root: false
+
+package_update: true
+package_reboot_if_required: true
+packages:
+ - pwgen
+ - micro
+ - mariadb-server
+ - sysbench
+ - zip
+
+ - apache2-utils
+ - apache2
+ - ssl-cert
+
+write_files:
+ - owner: root:root
+   path: /root/run.sh
+   permissions: '0755'
+   content: |
+     #include --raw run.sh
+ - owner: root:root
+   path: /root/info.sh
+   permissions: '0755'
+   content: |
+     #include --raw info.sh
+ - owner: root:root
+   path: /root/readers.sh
+   permissions: '0755'
+   content: |
+     #include --raw readers.sh
+ - owner: root:root
+   path: /root/setup-data.sh
+   permissions: '0755'
+   content: |
+     #include --raw setup-data.sh
+ - owner: root:root
+   path: /var/www/html/index.html
+   permissions: '0644'
+   content: |
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <title>sysbench results</title>
+      </head>
+      <body>
+        <h1>sysbench results</h1>
+        <ul>
+          <li><a href="output/">raw output</a></li>
+          <li><a href="cfg2html/">system configuration</a></li>
+          <li><a href="results.zip">results zip file</a></li>
+        </ul>
+      </body>
+    </html>
+
+users:
+- name: linux
+  sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+  groups: users
+  lock_passwd: false
+  shell: /bin/bash
+  passwd: $5$i2a7F9vcRZ5m1Phs$oBbSrbsMWOBpMDDL.4Siyr4wwjoWapdEEHPamZwfLU2
+  ssh_authorized_keys:
+  - #include linux-key.pub
+
+runcmd:
+ # Let sshd listen on port 443 too.
+ - "echo Port 22 >> /etc/ssh/sshd_config"
+ - "echo Port 443 >> /etc/ssh/sshd_config"
+ - "sed -i~ -e 's/^.*AllowTcpForwarding.*/AllowTcpForwarding yes/' /etc/ssh/sshd_config"
+ - systemctl restart sshd
+
+ # Look for data disks
+ - /root/setup-data.sh
+
+ # Save system configuration
+ - type git && git clone https://github.com/cfg2html/cfg2html.git
+ - ./cfg2html/cfg2html -o /var/www/html/cfg2html
+
+ # Create sysbench output...
+ - "(cd /data ; /root/run.sh /var/www/html/output)"
+ # create env description files
+ - /root/info.sh /var/www/html/output
+ # create summary file
+ - "/root/readers.sh /var/www/html/output /var/www/html/output/results.csv > /var/www/html/output/table.csv"
+ # create zip file bundle
+ - "(cd /var/www/html ; zip results.zip output/* cfg2html/*)"

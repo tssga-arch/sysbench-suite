@@ -1,0 +1,33 @@
+# Measurements on s2.xlarge.1 VM (4 vCPUs 4GB RAM),,
+# Intel(R) Xeon(R) Gold 6161 CPU @ 2.20GHz,,,
+# Standard I/O disk,,,
+_threads_,,,4
+cpu,std,events/sec,3535.78
+cpu,z_AVG_,events/sec,3535.78
+fio,rndrd-rd,MiB/sec,25.72
+fio,rndrd-rd,iops/sec,1646.39
+fio,rndrw-rd,MiB/sec,11.95
+fio,rndrw-rd,iops/sec,765.04
+fio,rndrw-wr,MiB/sec,7.97
+fio,rndrw-wr,iops/sec,510.02
+fio,rndwr-wr,MiB/sec,15.52
+fio,rndwr-wr,iops/sec,993.20
+fio,seqrd-rd,MiB/sec,98.23
+fio,seqrd-rd,iops/sec,6287.00
+fio,seqrewr-wr,MiB/sec,90.06
+fio,seqrewr-wr,iops/sec,5763.98
+fio,seqwr-wr,MiB/sec,90.09
+fio,seqwr-wr,iops/sec,5765.75
+fio,z_AVG_,MiB/sec,48.5057
+fio,z_AVG_,iops/sec,3104.48
+mem,rnd-read,MiB/sec,5708.16
+mem,rnd-write,MiB/sec,539.47
+mem,seq-read,MiB/sec,16718.28
+mem,seq-write,MiB/sec,4441.37
+mem,z_AVG_,MiB/sec,6851.82
+oltp,read_only,transactions/sec,1753.94
+oltp,read_write,transactions/sec,666.97
+oltp,update_index,transactions/sec,1825.28
+oltp,update_non_index,transactions/sec,2006.77
+oltp,write_only,transactions/sec,1673.89
+oltp,z_AVG_,transactions/sec,1585.37
